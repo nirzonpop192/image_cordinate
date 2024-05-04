@@ -1,6 +1,7 @@
 package com.rmg.image_input_canvas
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,6 +13,7 @@ import android.view.MotionEvent
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.drawToBitmap
+import coil.target.Target
 import com.bumptech.glide.Glide
 import com.rmg.image_input_canvas.databinding.ActivityMainBinding
 
@@ -31,6 +33,12 @@ class MainActivity : AppCompatActivity() {
     private var pointAxisX: Float = 0.0f
     private var pointAxisY: Float = 0.0f
 
+    private var ratioX: Float = 0.0f
+    private var ratioY: Float = 0.0f
+
+    private var finalHeight: Float=0.0f
+    private var finalWidth: Float=0.0f
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,25 +47,39 @@ class MainActivity : AppCompatActivity() {
 
 
         initialImageOnCanvas()
-
+        binding.btnNxt.setOnClickListener {
+            val intent = Intent(this@MainActivity, SetDotOnImageActivity::class.java)
+            intent.putExtra("X", ratioX)
+            intent.putExtra("Y", ratioY)
+            startActivity(intent)
+        }
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
-        val width =  displayMetrics.widthPixels
+        val width = displayMetrics.widthPixels
         "display  width = $width".log("dim")
         "display  height = $height".log("dim")
-        var finalHeight: Int
-        var finalWidth: Int
+
+
+
         val vto: ViewTreeObserver = binding.ivImage.viewTreeObserver
-        vto.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                binding.ivImage.viewTreeObserver.removeOnPreDrawListener(this)
-                finalHeight = binding.ivImage.measuredHeight
-                finalWidth = binding.ivImage.measuredWidth
-             "Height: $finalHeight Width: $finalWidth".log("dim")
-                return true
-            }
-        })
+//        vto.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+//            override fun onPreDraw(): Boolean {
+//                binding.ivImage.viewTreeObserver.removeOnPreDrawListener(this)
+//                finalHeight = binding.ivImage.measuredHeight
+//                finalWidth = binding.ivImage.measuredWidth
+//             "Height: $finalHeight Width: $finalWidth".log("dim")
+//                return true
+//            }
+//        })
+        binding.ivImage.viewTreeObserver.addOnGlobalLayoutListener {
+            // binding.ivImage.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+            // Get the width and height of the imageView
+            finalWidth = binding.ivImage.width.toFloat()
+            finalHeight = binding.ivImage.height.toFloat()
+            "finalHeight: $finalHeight finalWidth: $finalWidth".log("dim")
+        }
         binding.ivImage.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -85,8 +107,14 @@ class MainActivity : AppCompatActivity() {
                     "touchPoint now contains x and y in image's coordinate system".log("dim")
 
                     "Pont of value  of cordinate X = $pointAxisX \n Y = $pointAxisY".log("dim")
-                    var x: Float =(100.00f/width)*pointAxisX
-                    //"Pont of value  of cordinate inpercentage  X = $x".log("dim")
+                    ratioX = (100.00f / finalWidth) * pointAxisX
+                    "Pont of value  of cordinate inpercentage  X = $ratioX".log("dim")
+                    ratioY = (100.00f / finalHeight) * pointAxisY
+                    "Pont of value  of cordinate inpercentage  Y = $ratioY".log("dim")
+
+                    val reverseX = (width * ratioX) / 100.00f
+                    "Pont of value  of cordinate inpercentage reverse X = $reverseX".log("dim")
+
 
                     drawOnBitmap(pointAxisX, pointAxisY)
                     true
@@ -100,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
                 MotionEvent.ACTION_UP -> {
                     // Drawing completed, send the modified image to the backend
-                  //  markingImageViewModel.getSewingQcOperations()
+                    //  markingImageViewModel.getSewingQcOperations()
 
                     // drawnBitmap?.let { sendModifiedImageToBackend(it) }
                     true
@@ -125,7 +153,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun initialImageOnCanvas() {
+    private fun initialImageOnCanvas() {
         Glide.with(this)
             .load("https://www.aces.edu/wp-content/uploads/2023/04/iStock-1232014586.jpg")
             .error(R.drawable.logo)
