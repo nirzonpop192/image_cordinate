@@ -13,7 +13,6 @@ import android.view.MotionEvent
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.drawToBitmap
-import coil.target.Target
 import com.bumptech.glide.Glide
 import com.rmg.image_input_canvas.databinding.ActivityMainBinding
 
@@ -36,8 +35,9 @@ class MainActivity : AppCompatActivity() {
     private var ratioX: Float = 0.0f
     private var ratioY: Float = 0.0f
 
-    private var finalHeight: Float=0.0f
-    private var finalWidth: Float=0.0f
+    private var finalHeightOfImageView: Float=0.0f
+    private var finalWidthOfImageView: Float=0.0f
+    private val IMAGE_URL_LINK="https://www.aces.edu/wp-content/uploads/2023/04/iStock-1232014586.jpg"
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,23 +62,14 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        val vto: ViewTreeObserver = binding.ivImage.viewTreeObserver
-//        vto.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-//            override fun onPreDraw(): Boolean {
-//                binding.ivImage.viewTreeObserver.removeOnPreDrawListener(this)
-//                finalHeight = binding.ivImage.measuredHeight
-//                finalWidth = binding.ivImage.measuredWidth
-//             "Height: $finalHeight Width: $finalWidth".log("dim")
-//                return true
-//            }
-//        })
+
         binding.ivImage.viewTreeObserver.addOnGlobalLayoutListener {
-            // binding.ivImage.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
 
             // Get the width and height of the imageView
-            finalWidth = binding.ivImage.width.toFloat()
-            finalHeight = binding.ivImage.height.toFloat()
-            "finalHeight: $finalHeight finalWidth: $finalWidth".log("dim")
+            finalWidthOfImageView = binding.ivImage.width.toFloat()
+            finalHeightOfImageView = binding.ivImage.height.toFloat()
+            "finalHeight: $finalHeightOfImageView finalWidth: $finalWidthOfImageView".log("dim")
         }
         binding.ivImage.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
@@ -92,26 +83,27 @@ class MainActivity : AppCompatActivity() {
                     pointAxisX = motionEvent.x
                     pointAxisY = motionEvent.y
 
-                    // calculate inverse matrix
+
 
                     // calculate inverse matrix
                     val inverse = Matrix()
-                    binding.ivImage.getImageMatrix().invert(inverse)
+                    binding.ivImage.imageMatrix.invert(inverse)
 
-// map touch point from ImageView to image
+                    // map touch point from ImageView to image
 
-// map touch point from ImageView to image
+                    // map touch point from ImageView to image
                     val touchPoint = floatArrayOf(motionEvent.x, motionEvent.y)
                     inverse.mapPoints(touchPoint)
-// touchPoint now contains x and y in image's coordinate system
+                    // touchPoint now contains x and y in image's coordinate system
                     "touchPoint now contains x and y in image's coordinate system".log("dim")
 
                     "Pont of value  of cordinate X = $pointAxisX \n Y = $pointAxisY".log("dim")
-                    ratioX = (100.00f / finalWidth) * pointAxisX
+                    ratioX = (100.00f / finalWidthOfImageView) * pointAxisX
                     "Pont of value  of cordinate inpercentage  X = $ratioX".log("dim")
-                    ratioY = (100.00f / finalHeight) * pointAxisY
+                    ratioY = (100.00f / finalHeightOfImageView) * pointAxisY
                     "Pont of value  of cordinate inpercentage  Y = $ratioY".log("dim")
 
+                    // todo why need it
                     val reverseX = (width * ratioX) / 100.00f
                     "Pont of value  of cordinate inpercentage reverse X = $reverseX".log("dim")
 
@@ -128,9 +120,9 @@ class MainActivity : AppCompatActivity() {
 
                 MotionEvent.ACTION_UP -> {
                     // Drawing completed, send the modified image to the backend
-                    //  markingImageViewModel.getSewingQcOperations()
 
-                    // drawnBitmap?.let { sendModifiedImageToBackend(it) }
+
+
                     true
                 }
 
@@ -155,7 +147,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initialImageOnCanvas() {
         Glide.with(this)
-            .load("https://www.aces.edu/wp-content/uploads/2023/04/iStock-1232014586.jpg")
+            .load(IMAGE_URL_LINK)
             .error(R.drawable.logo)
             .into(binding.ivImage)
     }
