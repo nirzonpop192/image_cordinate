@@ -17,11 +17,18 @@ import com.bumptech.glide.Glide
 import com.rmg.image_input_canvas.databinding.ActivityMainBinding
 
 /**
- * https://stackoverflow.com/questions/4649438/how-to-get-the-dimensions-of-a-drawable-in-an-imageview/4649842
- * https://stackoverflow.com/questions/6038867/android-how-to-detect-touch-location-on-imageview-if-the-image-view-is-scaled-b
- * https://stackoverflow.com/questions/4680499/how-to-get-the-width-and-height-of-an-android-widget-imageview
- * https://stackoverflow.com/questions/4743116/get-screen-width-and-height-in-android
- * https://stackoverflow.com/questions/47107105/android-button-has-setontouchlistener-called-on-it-but-does-not-override-perform
+ * @author Faisal Mohammad @see [ email ] (nirzon192@gmail.com)
+ * @since version-0.1
+ * <p>This  class is demo  class</p>
+ * @see [dimensions of a drawable in an imageview] (https://stackoverflow.com/questions/4649438/how-to-get-the-dimensions-of-a-drawable-in-an-imageview/4649842)
+ *
+ * @see [android how to detect touch location on imageview if the image view is scaled b] (https://stackoverflow.com/questions/6038867/android-how-to-detect-touch-location-on-imageview-if-the-image-view-is-scaled-b)
+ *
+ * @see [ how to get the width and height of an android widget imageview] ( https://stackoverflow.com/questions/4680499/how-to-get-the-width-and-height-of-an-android-widget-imageview)
+ *
+ * @see [ get screen width and height in android] ( https://stackoverflow.com/questions/4743116/get-screen-width-and-height-in-android)
+ *
+ * @see [ android button has set on touch listener called on it but does not override perform] ( https://stackoverflow.com/questions/47107105/android-button-has-setontouchlistener-called-on-it-but-does-not-override-perform)
  */
 class MainActivity : AppCompatActivity() {
 
